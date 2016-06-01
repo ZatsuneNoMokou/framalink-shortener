@@ -1,0 +1,10 @@
+framalinkshortener@zatsunenomokou.eu-*.xpi
+.gitignore
+.jpmignore
+CHANGELOG.md
+README.md
+make_mozilla_build.sh
+*.xpi
+dist/
+.git/
+tmp/
