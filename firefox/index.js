@@ -16,6 +16,11 @@ function savePreference(prefId, value){
 	simplePrefs[prefId] = value;
 }
 
+function isRightURL(URL){
+	let test_url = /(?:http|https):\/\/.+/;
+	return (typeof URL == "string" && test_url.test(URL));
+}
+
 let firefox_button = ActionButton({
 	id: "framalinkshortener_button",
 	label: _("Shorten this page URL"),
@@ -34,11 +39,12 @@ function firefox_button_onClick(){
 }
 ContextMenu.Item({
 	label: _("Shorten this page URL"),
-	image: self.data.url("../icon.svg"),
+	image: self.data.url("icon.svg"),
 	context: [
 		ContextMenu.URLContext(["http://*", "https://*"])
 	],
 	contentScriptFile: self.data.url("page_getPageUrl.js"),
+
 	onMessage: function(data){
 		console.info(`[ContextMenu] URL: ${data}`);
 		shortener_url(data);
@@ -46,10 +52,10 @@ ContextMenu.Item({
 });
 ContextMenu.Item({
 	label: _("Shorten this link"),
-	image: self.data.url("../icon.svg"),
+	image: self.data.url("icon.svg"),
 	context: [
-		ContextMenu.URLContext(["http://*", "https://*"]),
-		ContextMenu.SelectorContext("a[href]")
+		ContextMenu.SelectorContext("a[href]"),
+		ContextMenu.PredicateContext(function(context){return isRightURL(context.linkURL);})
 	],
 	contentScriptFile: self.data.url("page_getUrlLink.js"),
 	onMessage: function(data){
@@ -57,17 +63,28 @@ ContextMenu.Item({
 		shortener_url(data);
 	}
 });
+ContextMenu.Item({
+	label: _("Shorten this picture"),
+	image: self.data.url("icon.svg"),
+	context: [
+		ContextMenu.SelectorContext("img[src]"),
+		ContextMenu.PredicateContext(function(context){return isRightURL(context.srcURL);})
+	],
+	contentScriptFile: self.data.url("page_getImgUrl.js"),
+	onMessage: function(data){
+		console.info(`[ContextMenu] URL: ${data}`);
+		shortener_url(data);
+	}
+});
 
 function shortener_url(url){
-	let test_url = /(?:http|https):\/\/.+/;
-	
 	let api_url = getPreferences("custom_lstu_server");
-	if(test_url.test(api_url) == false){
+	if(isRightURL(api_url) == false){
 		api_url = "https://frama.link/";
 	}
 	api_url = `${api_url}${(/(?:http|https):\/\/.+\//.test(api_url) == true)? "a" : "/a"}`;
 	
-	if(typeof url == "string" && test_url.test(url) == true){
+	if(typeof url == "string" && isRightURL(url) == true){
 		Request({
 			url: api_url,
 			content: {"lsturl": url, "format": "json"},

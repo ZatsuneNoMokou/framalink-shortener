@@ -8,7 +8,7 @@ rm -rf tmp
 mkdir tmp
 
 #cp -rt tmp data locale icon.png index.js LICENSE package.json README.md
-cp -rt tmp data locale icon.png icon.svg index.js package.json README.md
+cp -rt tmp data locale icon.png index.js package.json README.md
 
 echo "cd tmp..."
 cd tmp
@@ -25,7 +25,7 @@ sed -n '1h;1!H;${;g;s/ else {[\s\t\n\p\r]*}//g;p;}' index.js > index_new.js
 mv index_new.js index.js
 
 echo "Remplacement des éléments de package.json..."
-sed		-e 's/\"title\"\: \"Frama.link shortener (Dev)\"/\"title\"\: \"Frama.link shortener\"/g' \
+sed		-e 's/\"title\"\: \"Framalink shortener (Dev)\"/\"title\"\: \"Framalink shortener\"/g' \
 		-e 's/\"updateLink\"\: \".*\",//g' \
 		-e 's/\"updateURL\"\: \".*\",//gi' \
 		-e '/^\s*$/d' \
