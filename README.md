@@ -1,3 +1,3 @@
-#Framalink shortener
+# Framalink shortener
 
 Get short links using Framalink
