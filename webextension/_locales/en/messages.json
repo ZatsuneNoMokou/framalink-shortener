@@ -1,0 +1,55 @@
+{
+	"extName": {
+		"message": "Framalink shortener",
+		"description": ""
+	},
+	"extShortDesc": {
+		"message": "Get short links using Framalink, a LSTU server.",
+		"description": "this will be used as short description in web stores: MUST BE 132 characters OR LESS"
+	},
+	"Shorten_this_link": {
+		"message": "Shorten this link"
+	},
+	"Shorten_this_picture": {
+		"message": "Shorten this picture"
+	},
+	"Shorten_this_page_URL": {
+		"message": "Shorten this page URL"
+	},
+	"Shortened_link_copied_in_the_clipboard": {
+		"message": "Shortened link copied in the clipboard"
+	},
+	"Error_when_copying_to_clipboad": {
+		"message": "Error when copying into clipboad"
+	},
+	"Retry_or_try_the_context_menu": {
+		"message": "Retry or try the context menu"
+	},
+	"Check_your_link_or_page": {
+		"message": "Check your link or page"
+	},
+	"custom_lstu_server_title": {
+		"message": "Custom LSTU server"
+	},
+	"custom_lstu_server_description": {
+		"message": "LSTU server, for example https://lstu.fr/"
+	},
+	"options_saved": {
+		"message": "Options saved."
+	},
+	"options_saved_sync": {
+		"message": "Options saved in synchronisation."
+	},
+	"save": {
+		"message": "Save"
+	},
+	"sync_title": {
+		"message": "Save / Restaure preferences from/to synchronization"
+	},
+	"restaure_sync": {
+		"message": "Restaure"
+	},
+	"save_sync": {
+		"message": "Save"
+	}
+}
