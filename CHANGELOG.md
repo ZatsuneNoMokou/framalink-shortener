@@ -1,3 +1,6 @@
+# 1.2.0
+* Fix: Fixes to make Web Extension working with Firefox
+
 # 1.1.1
 * Fix: Remove console.* for mozilla build
 

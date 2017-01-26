@@ -22,7 +22,7 @@ function isRightURL(URL){
 chrome.browserAction.onClicked.addListener(function(tab){
 	let url = tab.url; // tabs.Tab
 	console.info(`[ActionButton] URL: ${url}`);
-	shortener_url(url);
+	shortener_url(url, tab);
 })
 chrome.contextMenus.create({
 	"title": _("Shorten_this_page_URL"),
@@ -31,7 +31,7 @@ chrome.contextMenus.create({
 	"onclick": function(info, tab){
 		let data = info.pageUrl;
 		console.info(`[ContextMenu] URL: ${data}`);
-		shortener_url(data);
+		shortener_url(data, tab);
 	}
 });
 chrome.contextMenus.create({
@@ -41,7 +41,7 @@ chrome.contextMenus.create({
 	"onclick": function(info, tab){
 		let data = info.linkUrl;
 		console.info(`[ContextMenu] URL: ${data}`);
-		shortener_url(data);
+		shortener_url(data, tab);
 	}
 });
 chrome.contextMenus.create({
@@ -52,69 +52,11 @@ chrome.contextMenus.create({
 		console.dir(info);
 		let data = info.srcUrl;
 		console.info(`[ContextMenu] URL: ${data}`);
-		shortener_url(data);
+		shortener_url(data, tab);
 	}
 });
 
-function copyToClipboard(string){
-	let copy = function(string){
-		let copy_form;
-		if(document.querySelector("#copy_form") === null){
-			copy_form = document.createElement("textarea");
-			copy_form.id = "copy_form";
-			copy_form.textContent = string;
-			document.querySelector("body").appendChild(copy_form);
-		} else {
-			copy_form = document.querySelector("#copy_form");
-		}
-		
-		copy_form.focus();
-		document.execCommand('SelectAll');
-		let clipboard_success = document.execCommand('Copy');
-		if(clipboard_success){
-			if(clipboard_success){
-				chrome.notifications.create({
-					type: "basic",
-					title: "Framalink shortener",
-					message: _("Shortened_link_copied_in_the_clipboard"),
-					iconUrl: "/icon.png",
-					isClickable: true
-				});
-			}
-		} else {
-				chrome.notifications.create({
-					type: "basic",
-					title: "Framalink shortener",
-					message: _("Error_when_copying_to_clipboad"),
-					iconUrl: "/icon.png",
-					isClickable: true
-				});
-				console.warn(`Copy to clipboad error (${string})`)
-		}
-		
-		copy_form.parentNode.removeChild(copy_form);
-	}
-	
-	chrome.permissions.contains({
-		permissions: ['clipboardWrite'],
-	}, function(result) {
-		if(result){
-			copy(string);
-		} else {
-			console.log("Clipboard writing permission not granted");
-			chrome.permissions.request({
-				permissions: ['clipboardWrite'],
-			}, function(result) {
-				if(result){
-					copy(string);
-				} else {
-					console.error("The extension doesn't have the permissions.");
-				}
-			});
-		}
-	});
-}
-function shortener_url(url){
+function shortener_url(url, tab){
 	let api_url = getPreferences("custom_lstu_server");
 	if(isRightURL(api_url) == false){
 		api_url = "https://frama.link/";
@@ -137,7 +79,32 @@ function shortener_url(url){
 				if(data.success == true){
 					let short_link = data.short;
 					
-					copyToClipboard(short_link);
+					//copyToClipboard(short_link);
+					chrome.tabs.executeScript(tab.id, {file: "/data/js/page_copyLink.js"}, function(){
+						chrome.tabs.sendMessage(tab.id, {
+							id: "clipboardWrite",
+							data: short_link
+						}, function(clipboard_success, string){
+							if(clipboard_success){
+								chrome.notifications.create({
+									type: "basic",
+									title: "Framalink shortener",
+									message: _("Shortened_link_copied_in_the_clipboard"),
+									iconUrl: "/icon.png",
+									isClickable: true
+								});
+							} else {
+								chrome.notifications.create({
+									type: "basic",
+									title: "Framalink shortener",
+									message: _("Error_when_copying_to_clipboad"),
+									iconUrl: "/icon.png",
+									isClickable: true
+								});
+								console.warn(`Copy to clipboad error (${string})`);
+							}
+						});
+					});
 				}
 			} else {
 				chrome.notifications.create({

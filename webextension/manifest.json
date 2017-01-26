@@ -1,20 +1,30 @@
 {
+	"applications": {
+		"gecko": {
+			"id": "framalinkshortener_dev@zatsunenomokou.eu",
+			"update_url": "https://gitlab.com/ZatsuneNoMokou/framalink-shortener/raw/master/dist/framalink_shortener_dev.update.json",
+			"strict_min_version": "50.0"
+		}
+	},
 	"manifest_version": 2,
-	"name": "Framalink shortener",
-	"short_name": "framalinkshortener",
+	"name": "Framalink shortener (Dev)",
+	"short_name": "FramalinkShortenerDev",
 	"description": "__MSG_extShortDesc__",
 	"author": "ZatsuneNoMokou",
-	"version": "1.1.2",
+	"version": "1.2.0",
 	"homepage_url": "https://gitlab.com/ZatsuneNoMokou/framalink-shortener",
 	"icons": {
+		"96": "/icon_96.png",
 		"128": "/icon_128.png"
 	},
 	"background": {
 		"scripts": [ "data/options-data.js", "data/options-api.js", "index.js" ]
 	},
 	"browser_action": {
-		"default_icon": "/icon.png",
-		"icons": {
+		"default_icon": {
+			"16": "/icon_16.png",
+			"48": "/icon_48.png",
+			"96": "/icon_96.png",
 			"128": "/icon_128.png"
 		}
 	},
