@@ -4,9 +4,9 @@ let _ = chrome.i18n.getMessage;
 
 // appGlobal: Accessible with chrome.extension.getBackgroundPage();
 var appGlobal = {
-	options: options,
-	options_default: options_default,
-	options_default_sync: options_default_sync,
+	options: optionsData.options,
+	options_default: optionsData.options_default,
+	options_default_sync: optionsData.options_default_sync,
 }
 
 chrome.notifications.onClicked.addListener(function(notificationId){
@@ -57,7 +57,7 @@ chrome.contextMenus.create({
 });
 
 function shortener_url(url, tab){
-	let api_url = getPreferences("custom_lstu_server");
+	let api_url = getPreference("custom_lstu_server");
 	if(isRightURL(api_url) == false){
 		api_url = "https://frama.link/";
 	}
@@ -79,31 +79,23 @@ function shortener_url(url, tab){
 				if(data.success == true){
 					let short_link = data.short;
 					
-					//copyToClipboard(short_link);
-					chrome.tabs.executeScript(tab.id, {file: "/data/js/page_copyLink.js"}, function(){
-						chrome.tabs.sendMessage(tab.id, {
-							id: "clipboardWrite",
-							data: short_link
-						}, function(clipboard_success, string){
-							if(clipboard_success){
-								chrome.notifications.create({
-									type: "basic",
-									title: "Framalink shortener",
-									message: _("Shortened_link_copied_in_the_clipboard"),
-									iconUrl: "/icon.png",
-									isClickable: true
-								});
-							} else {
-								chrome.notifications.create({
-									type: "basic",
-									title: "Framalink shortener",
-									message: _("Error_when_copying_to_clipboad"),
-									iconUrl: "/icon.png",
-									isClickable: true
-								});
+					chrome.tabs.sendMessage(tab.id, {
+						id: "clipboardWrite",
+						data: short_link
+					}, function(responseData){
+						let clipboard_success = responseData.clipboard_success,
+							string = responseData.clipboard_success;
+							
+							chrome.notifications.create({
+								type: "basic",
+								title: "Framalink shortener",
+								message: (clipboard_success)? _("Shortened_link_copied_in_the_clipboard") : _("Error_when_copying_to_clipboad"),
+								iconUrl: "/icon.png",
+								isClickable: true
+							});
+							if(!clipboard_success){
 								console.warn(`Copy to clipboad error (${string})`);
 							}
-						});
 					});
 				}
 			} else {
@@ -128,3 +120,29 @@ function shortener_url(url, tab){
 		});
 	}
 }
+
+chrome.storage.local.get(null,function(currentLocalStorage) {
+	let currentPreferences = {};
+	for(let prefId in currentLocalStorage){
+		if(optionsData.options_default.hasOwnProperty(prefId)){
+			currentPreferences[prefId] = currentLocalStorage[prefId];
+		} else {
+			currentPreferences[prefId] = currentLocalStorage[prefId];
+			console.warn(`${prefId} has no default value (value: currentLocalStorage[prefId])`);
+		}
+	}
+	
+	// Load default settings for the missing settings without saving them in the storage
+	for(let prefId in optionsData.options_default){
+		if(!currentPreferences.hasOwnProperty(prefId)){
+			currentPreferences[prefId] = optionsData.options_default[prefId];
+		}
+	}
+	
+	appGlobal.currentPreferences = currentPreferences;
+	
+	console.group();
+	console.info("Current preferences in the local storage:");
+	console.dir(currentPreferences);
+	console.groupEnd();
+})

@@ -1,3 +1,7 @@
+# 2.0.0
+* Fix: Possibility to lose preferences because of the preference storage
+* i: Code rework to add the possibility to copy the text of the links (unused for now)
+
 # 1.2.0
 * Fix: Fixes to make Web Extension working with Firefox
 

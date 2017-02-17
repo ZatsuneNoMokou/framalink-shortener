@@ -55,22 +55,22 @@ function newPreferenceNode(parent, id, prefObj){
 		case "string":
 			prefNode = document.createElement("input");
 			prefNode.type = "text";
-			prefNode.value = getPreferences(id);
+			prefNode.value = getPreference(id);
 			break;
 		case "integer":
 			prefNode = document.createElement("input");
 			prefNode.type = "number";
-			prefNode.value = parseInt(getPreferences(id));
+			prefNode.value = parseInt(getPreference(id));
 			break;
 		case "bool":
 			prefNode = document.createElement("input");
 			prefNode.type = "checkbox";
-			prefNode.checked = getBooleanFromVar(getPreferences(id));
+			prefNode.checked = getBooleanFromVar(getPreference(id));
 			break;
 		case "color":
 			prefNode = document.createElement("input");
 			prefNode.type = "color";
-			prefNode.value = getPreferences(id);
+			prefNode.value = getPreference(id);
 			break;
 		case "control":
 			prefNode = document.createElement("button");
@@ -89,7 +89,7 @@ function newPreferenceNode(parent, id, prefObj){
 				
 				prefNode.add(optionNode);
 			}
-			prefNode.value = getPreferences(id);
+			prefNode.value = getPreference(id);
 			break;
 	}
 	prefNode.id = id;
