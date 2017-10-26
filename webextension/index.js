@@ -7,33 +7,42 @@ var appGlobal = {
 	options: optionsData.options,
 	options_default: optionsData.options_default,
 	options_default_sync: optionsData.options_default_sync,
-}
+};
 
 chrome.notifications.onClicked.addListener(function(notificationId){
 	console.info(`${notificationId} (onClicked)`);
 	chrome.notifications.clear(notificationId);
-})
+});
 
 function isRightURL(URL){
 	let test_url = /(?:http|https):\/\/.+/;
-	return (typeof URL == "string" && test_url.test(URL));
+	return (typeof URL === "string" && test_url.test(URL));
 }
 
 chrome.browserAction.onClicked.addListener(function(tab){
 	let url = tab.url; // tabs.Tab
 	console.info(`[ActionButton] URL: ${url}`);
 	shortener_url(url, tab);
-})
-chrome.contextMenus.create({
-	"title": _("Shorten_this_page_URL"),
-	"contexts": ["page"],
-	"documentUrlPatterns": ["http://*/*", "https://*/*"],
-	"onclick": function(info, tab){
-		let data = info.pageUrl;
-		console.info(`[ContextMenu] URL: ${data}`);
-		shortener_url(data, tab);
-	}
 });
+let pageMenu = [];
+if(chrome.contextMenus.ContextType.hasOwnProperty("PAGE")){
+	pageMenu.push("page");
+}
+if(chrome.contextMenus.ContextType.hasOwnProperty("TAB")){
+	pageMenu.push("tab");
+}
+if(pageMenu.length>0){
+	chrome.contextMenus.create({
+		"title": _("Shorten_this_page_URL"),
+		"contexts": pageMenu,
+		"documentUrlPatterns": ["http://*/*", "https://*/*"],
+		"onclick": function(info, tab){
+			let data = info.pageUrl;
+			console.info(`[ContextMenu] URL: ${data}`);
+			shortener_url(data, tab);
+		}
+	});
+}
 chrome.contextMenus.create({
 	"title": _("Shorten_this_link"),
 	"contexts": ["link"],
@@ -58,25 +67,25 @@ chrome.contextMenus.create({
 
 function shortener_url(url, tab){
 	let api_url = getPreference("custom_lstu_server");
-	if(isRightURL(api_url) == false){
+	if(isRightURL(api_url) === false){
 		api_url = "https://frama.link/";
 	}
-	api_url = `${api_url}${(/(?:http|https):\/\/.+\//.test(api_url) == true)? "a" : "/a"}`;
+	api_url = `${api_url}${(/(?:http|https):\/\/.+\//.test(api_url) === true)? "a" : "/a"}`;
 	
-	if(typeof url == "string" && isRightURL(url) == true){
+	if(typeof url === "string" && isRightURL(url) === true){
 		let xhr = new XMLHttpRequest({anonymous:true});
 		xhr.open("POST", api_url, true);
 		//xhr.overrideMimeType(overrideMimeType);
 		
 		xhr.onload = function(){
 			let data = JSON.parse(xhr.responseText);
-			if(data != null){
+			if(data !== null){
 				console.group();
-				console.info(`[Framalink shortener] ${(api_url == "https://frama.link/a")? "Framalink (" : `Custom LSTU serveur response (API: ${api_url} `}URL: ${url} )`);
+				console.info(`[Framalink shortener] ${(api_url === "https://frama.link/a")? "Framalink (" : `Custom LSTU serveur response (API: ${api_url} `}URL: ${url} )`);
 				console.dir(data);
 				console.groupEnd();
 				
-				if(data.success == true){
+				if(data.success === true){
 					let short_link = data.short;
 					
 					chrome.tabs.sendMessage(tab.id, {
@@ -124,6 +133,9 @@ function shortener_url(url, tab){
 chrome.storage.local.get(null,function(currentLocalStorage) {
 	let currentPreferences = {};
 	for(let prefId in currentLocalStorage){
+		if(!currentLocalStorage.hasOwnProperty(prefId)){
+			continue;
+		}
 		if(optionsData.options_default.hasOwnProperty(prefId)){
 			currentPreferences[prefId] = currentLocalStorage[prefId];
 		} else {
@@ -134,7 +146,7 @@ chrome.storage.local.get(null,function(currentLocalStorage) {
 	
 	// Load default settings for the missing settings without saving them in the storage
 	for(let prefId in optionsData.options_default){
-		if(!currentPreferences.hasOwnProperty(prefId)){
+		if(optionsData.options_default.hasOwnProperty(prefId) && !currentPreferences.hasOwnProperty(prefId)){
 			currentPreferences[prefId] = optionsData.options_default[prefId];
 		}
 	}
@@ -145,4 +157,4 @@ chrome.storage.local.get(null,function(currentLocalStorage) {
 	console.info("Current preferences in the local storage:");
 	console.dir(currentPreferences);
 	console.groupEnd();
-})
+});

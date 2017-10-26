@@ -1,3 +1,6 @@
+# 2.1.0
+* i: Add menu item to tab context menu when supported (Firefox only, currently)
+
 # 2.0.0
 * Fix: Possibility to lose preferences because of the preference storage
 * i: Code rework to add the possibility to copy the text of the links (unused for now)

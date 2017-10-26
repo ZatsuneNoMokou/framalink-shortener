@@ -11,14 +11,18 @@
 	"short_name": "FramalinkShortenerDev",
 	"description": "__MSG_extShortDesc__",
 	"author": "ZatsuneNoMokou",
-	"version": "2.0.0",
+	"version": "2.1.0",
 	"homepage_url": "https://gitlab.com/ZatsuneNoMokou/framalink-shortener",
 	"icons": {
 		"96": "/icon_96.png",
 		"128": "/icon_128.png"
 	},
 	"background": {
-		"scripts": [ "data/options-data.js", "data/options-api.js", "index.js" ]
+		"scripts": [
+			"data/options-data.js",
+			"data/options-api.js",
+			"index.js"
+		]
 	},
 	"browser_action": {
 		"default_icon": {
