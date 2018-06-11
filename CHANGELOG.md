@@ -1,3 +1,6 @@
+# 2.2.2
+* i: Message on request error
+
 # 2.2.1
 * i: Clipboard copy (Firefox only)
 
