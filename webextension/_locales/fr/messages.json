@@ -22,6 +22,9 @@
 	"Error_when_copying_to_clipboad": {
 		"message": "Erreur lors de la copie dans le presse-papier"
 	},
+	"Error_on_request": {
+		"message": "Erreur lors de la génération du lien"
+	},
 	"Retry_or_try_the_context_menu": {
 		"message": "Réessayez ou essayez le menu contextuel"
 	},

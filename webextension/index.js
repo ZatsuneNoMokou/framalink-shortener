@@ -142,7 +142,17 @@ function shortener_url(url, tab){
 		let xhr = new XMLHttpRequest({anonymous:true});
 		xhr.open("POST", api_url, true);
 		//xhr.overrideMimeType(overrideMimeType);
-		
+
+		xhr.onerror = function(){
+			chrome.notifications.create({
+				type: "basic",
+				title: "Framalink shortener",
+				message: _("Error_on_request"),
+				iconUrl: "/icon.png",
+				isClickable: true
+			});
+		};
+
 		xhr.onload = function(){
 			let data = JSON.parse(xhr.responseText);
 			if(data !== null){
