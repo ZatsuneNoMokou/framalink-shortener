@@ -1,3 +1,6 @@
+# 2.2.0
+* i: Clipboard without using content script (Chrome/Chromium only, currently)
+
 # 2.1.0
 * i: Add menu item to tab context menu when supported (Firefox only, currently)
 
