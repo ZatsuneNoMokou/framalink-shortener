@@ -11,7 +11,7 @@
 	"short_name": "FramalinkShortenerDev",
 	"description": "__MSG_extShortDesc__",
 	"author": "ZatsuneNoMokou",
-	"version": "2.2.0",
+	"version": "2.2.1",
 	"homepage_url": "https://gitlab.com/ZatsuneNoMokou/framalink-shortener",
 	"icons": {
 		"96": "/icon_96.png",

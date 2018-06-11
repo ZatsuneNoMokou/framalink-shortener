@@ -39,7 +39,7 @@ document.addEventListener('contextmenu', function(event) {
 });
 
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse){
-	if(sender === extId){
+	if(sender.id === extId){
 		let messageData = null;
 		
 		if(typeof message === "string"){
@@ -57,16 +57,14 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse){
 					let url = messageData.data;
 					try{
 						sendResponse({clipboard_success: copyToClipboard(url), string: url});
-					}
-					catch(err){
+					} catch(err){
 						console.warn(err);
 					}
 					break;
 				case "copyLinkText":
 					try{
 						sendResponse({clipboard_success: copyToClipboard(linkContext.text), string: linkContext.text});
-					}
-					catch(err){
+					} catch(err){
 						console.warn(err);
 					}
 					break;
