@@ -1,12 +1,24 @@
 'use strict';
 
+// https://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser/9851769#9851769
+
+const userAgent = (navigator && navigator.userAgent) || '';
+
+// Firefox 1.0+
+const isFirefox = typeof InstallTrigger !== 'undefined' || /(?:firefox|fxios)\/(\d+)/i.test(userAgent);
+
+
+
+
+
 let _ = chrome.i18n.getMessage;
 
 // appGlobal: Accessible with chrome.extension.getBackgroundPage();
 var appGlobal = {
-	options: optionsData.options,
-	options_default: optionsData.options_default,
-	options_default_sync: optionsData.options_default_sync,
+	"options": optionsData.options,
+	"options_default": optionsData.options_default,
+	"options_default_sync": optionsData.options_default_sync,
+	"isFirefox": isFirefox
 };
 
 chrome.notifications.onClicked.addListener(function(notificationId){
@@ -65,11 +77,65 @@ chrome.contextMenus.create({
 	}
 });
 
-function shortener_url(url, tab){
-	let api_url = getPreference("custom_lstu_server");
-	if(isRightURL(api_url) === false){
-		api_url = "https://frama.link/";
+const getApiUrl = appGlobal["getApiUrl"] = function(){
+	const defaultApiUrl = "https://frama.link/",
+		customApiUrl = getPreference("custom_lstu_server")
+	;
+	return (isRightURL(customApiUrl) === false)? defaultApiUrl : customApiUrl
+};
+
+
+
+function copyToClipboard_mainScript(string){
+	if(document.querySelector("#copy_form") != null){
+		let node = document.querySelector("#copy_form");
+		node.parentNode.removeChild(node);
 	}
+
+	let copy_form = document.createElement("textarea");
+	copy_form.id = "copy_form";
+	copy_form.textContent = string;
+	//copy_form.class = "hide";
+	copy_form.setAttribute("style", "height: 0 !important; width: 0 !important; border: none !important; z-index: -9999999;");
+	document.querySelector("body").appendChild(copy_form);
+
+	//copy_form.focus();
+	copy_form.select();
+
+	let clipboard_success = document.execCommand('Copy');
+	copy_form.parentNode.removeChild(copy_form);
+
+	return clipboard_success;
+}
+
+function copyToCliboard(string) {
+	return new Promise((resolve, reject) => {
+		if(isFirefox===false){
+			const clipboardSuccess = copyToClipboard_mainScript(string);
+			if(clipboardSuccess===true){
+				resolve();
+			} else {
+				reject();
+			}
+		} else {
+			chrome.tabs.sendMessage(tab.id, {
+				id: "clipboardWrite",
+				data: string
+			}, function(responseData){
+				if(responseData.clipboard_success===true){
+					resolve(responseData.string);
+				} else {
+					reject(responseData.string);
+				}
+			});
+		}
+	})
+}
+
+
+
+function shortener_url(url, tab){
+	let api_url = getApiUrl();
 	api_url = `${api_url}${(/(?:http|https):\/\/.+\//.test(api_url) === true)? "a" : "/a"}`;
 	
 	if(typeof url === "string" && isRightURL(url) === true){
@@ -87,25 +153,29 @@ function shortener_url(url, tab){
 				
 				if(data.success === true){
 					let short_link = data.short;
-					
-					chrome.tabs.sendMessage(tab.id, {
-						id: "clipboardWrite",
-						data: short_link
-					}, function(responseData){
-						let clipboard_success = responseData.clipboard_success,
-							string = responseData.clipboard_success;
-							
+
+					copyToCliboard(short_link)
+						.then(()=>{
 							chrome.notifications.create({
 								type: "basic",
 								title: "Framalink shortener",
-								message: (clipboard_success)? _("Shortened_link_copied_in_the_clipboard") : _("Error_when_copying_to_clipboad"),
+								message: _("Shortened_link_copied_in_the_clipboard"),
 								iconUrl: "/icon.png",
 								isClickable: true
 							});
-							if(!clipboard_success){
-								console.warn(`Copy to clipboad error (${string})`);
-							}
-					});
+						})
+						.catch((string)=>{
+							chrome.notifications.create({
+								type: "basic",
+								title: "Framalink shortener",
+								message:  _("Error_when_copying_to_clipboad"),
+								iconUrl: "/icon.png",
+								isClickable: true
+							});
+
+							console.warn(`Copy to clipboad error (${string})`);
+						})
+					;
 				}
 			} else {
 				chrome.notifications.create({
@@ -158,3 +228,43 @@ chrome.storage.local.get(null,function(currentLocalStorage) {
 	console.dir(currentPreferences);
 	console.groupEnd();
 });
+
+/*
+const hasCookiesPermission = appGlobal["hasCookiesPermission"] = function(url){
+	const cookiesPermissionOpts = {
+		"permissions": ["cookies"]
+	};
+	return new Promise((resolve, reject)=>{
+		chrome.permissions.contains(cookiesPermissionOpts, havePermissions=>{
+			resolve(havePermissions)
+		});
+	})
+};
+
+function addShortenedToCookie(shortenedUrlId){
+	hasCookiesPermission()
+		.then(function(){
+			chrome.cookies.get({
+				"name": "url",
+				"url": getApiUrl()
+			}, function(cookie){
+				let cookieValue = [];
+
+				try{
+					cookieValue = JSON.parse(cookie.value);
+				} catch(e){
+					console.warn(e);
+				}
+
+				cookieValue.push(shortenedUrlId);
+
+				chrome.cookies.set({
+					"name": "url",
+					"url": getApiUrl(),
+					"value": JSON.stringify(value)
+				})
+			})
+		})
+	;
+}
+*/

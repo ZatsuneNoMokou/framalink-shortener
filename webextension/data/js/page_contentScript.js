@@ -27,7 +27,7 @@ function copyToClipboard(string){
 
 let linkContext;
 document.addEventListener('contextmenu', function(event) {
-	let target = event.target
+	let target = event.target;
 	
 	linkContext = {
 		tagType: target.localName,
@@ -39,15 +39,15 @@ document.addEventListener('contextmenu', function(event) {
 });
 
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse){
-	if(sender = extId){
+	if(sender === extId){
 		let messageData = null;
 		
-		if(typeof message == "string"){
+		if(typeof message === "string"){
 			try{
 				messageData = JSON.parse(message);
 			}
 			catch(err){}
-		} else if(typeof message == "object"){
+		} else if(typeof message === "object"){
 			messageData = message
 		}
 		
