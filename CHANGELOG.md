@@ -1,3 +1,6 @@
+# 2.2.1
+* i: Clipboard copy (Firefox only)
+
 # 2.2.0
 * i: Clipboard without using content script (Chrome/Chromium only, currently)
 

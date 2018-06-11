@@ -108,7 +108,7 @@ function copyToClipboard_mainScript(string){
 	return clipboard_success;
 }
 
-function copyToCliboard(string) {
+function copyToCliboard(string, tab) {
 	return new Promise((resolve, reject) => {
 		if(isFirefox===false){
 			const clipboardSuccess = copyToClipboard_mainScript(string);
@@ -122,7 +122,7 @@ function copyToCliboard(string) {
 				id: "clipboardWrite",
 				data: string
 			}, function(responseData){
-				if(responseData.clipboard_success===true){
+				if(responseData !== undefined && responseData.clipboard_success===true){
 					resolve(responseData.string);
 				} else {
 					reject(responseData.string);
@@ -154,7 +154,7 @@ function shortener_url(url, tab){
 				if(data.success === true){
 					let short_link = data.short;
 
-					copyToCliboard(short_link)
+					copyToCliboard(short_link, tab)
 						.then(()=>{
 							chrome.notifications.create({
 								type: "basic",
