@@ -3,7 +3,7 @@
 		"gecko": {
 			"id": "framalinkshortener_dev@zatsunenomokou.eu",
 			"update_url": "https://gitlab.com/ZatsuneNoMokou/framalink-shortener/raw/master/dist/framalink_shortener_dev.update.json",
-			"strict_min_version": "50.0"
+			"strict_min_version": "63.0"
 		}
 	},
 	"manifest_version": 2,
@@ -32,13 +32,6 @@
 			"128": "/icon_128.png"
 		}
 	},
-	"content_scripts": [
-		{
-			"js": [ "data/js/page_contentScript.js" ],
-			"matches": [ "http://*/*", "https://*/*" ],
-			"run_at": "document_end"
-		}
-	],
 	"default_locale": "en",
 	"offline_enabled": false,
 	"permissions": [
