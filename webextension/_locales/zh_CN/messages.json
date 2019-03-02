@@ -1,0 +1,58 @@
+{
+	"extName": {
+		"message": "Framalink 短链接生成器",
+		"description": ""
+	},
+	"extShortDesc": {
+		"message": "使用 Framalink 获取短链接，它是一个 LSTU 服务器。",
+		"description": "this will be used as short description in web stores: MUST BE 132 characters OR LESS"
+	},
+	"Shorten_this_link": {
+		"message": "获取链接的短链接"
+	},
+	"Shorten_this_picture": {
+		"message": "获取图像的短链接"
+	},
+	"Shorten_this_page_URL": {
+		"message": "获取页面的短链接"
+	},
+	"Shortened_link_copied_in_the_clipboard": {
+		"message": "短链接已复制到剪贴板"
+	},
+	"Error_when_copying_to_clipboad": {
+		"message": "复制到剪贴板出错"
+	},
+	"Error_on_request": {
+		"message": "生成短链接出错"
+	},
+	"Retry_or_try_the_context_menu": {
+		"message": "重试或尝试右键菜单项目"
+	},
+	"Check_your_link_or_page": {
+		"message": "请检查您的链接或页面"
+	},
+	"custom_lstu_server_title": {
+		"message": "自定义 LSTU 服务器"
+	},
+	"custom_lstu_server_description": {
+		"message": "LSTU 服务器，例如 https://lstu.fr/"
+	},
+	"options_saved": {
+		"message": "选项已保存。"
+	},
+	"options_saved_sync": {
+		"message": "选项已保存到同步存储区。"
+	},
+	"save": {
+		"message": "保存"
+	},
+	"sync_title": {
+		"message": "保存 / 恢复选项到同步存储区"
+	},
+	"restaure_sync": {
+		"message": "恢复"
+	},
+	"save_sync": {
+		"message": "保存"
+	}
+}
