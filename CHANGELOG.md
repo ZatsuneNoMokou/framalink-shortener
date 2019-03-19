@@ -1,3 +1,6 @@
+# 3.0.1
+* Fix : Style syntax
+
 # 3.0.0
 * i : Request now using [fetch](https://developer.mozilla.org//docs/Web/API/Fetch_API), for more simple syntax
 * i : Code cleanup
