@@ -217,7 +217,7 @@ function restaureOptionsFromSync(){
 			
 			if(prefNode == null){
 				console.group();
-				console.warn(`Sync restaure: the node of the preference ${id} doesn't not exist in the option page (value: ${items[id]})`);
+				console.warn(`Sync restore: the node of the preference ${id} doesn't not exist in the option page (value: ${items[id]})`);
 				console.info("Maybe it's just a setting without sync (addon version, for exemple)")
 				console.groupEnd();
 				return;

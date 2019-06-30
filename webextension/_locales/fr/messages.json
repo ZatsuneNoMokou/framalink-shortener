@@ -47,7 +47,7 @@
 		"message": "Enregistrer"
 	},
 	"sync_title": {
-		"message": "Enregistrer / Restaurer les préférences depuis/vers la synchronisation"
+		"message": "Enregistrer/Restaurer les préférences depuis/vers la synchronisation"
 	},
 	"restaure_sync": {
 		"message": "Restaurer"

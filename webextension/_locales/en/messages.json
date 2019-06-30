@@ -47,10 +47,10 @@
 		"message": "Save"
 	},
 	"sync_title": {
-		"message": "Save / Restaure preferences from/to synchronization"
+		"message": "Save/Restore preferences from/to synchronization"
 	},
 	"restaure_sync": {
-		"message": "Restaure"
+		"message": "Restore"
 	},
 	"save_sync": {
 		"message": "Save"
