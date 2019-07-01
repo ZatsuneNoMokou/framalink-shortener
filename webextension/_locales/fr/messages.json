@@ -1,7 +1,7 @@
 {
 	"extName": {
 		"message": "Framalink shortener",
-		"description": ""
+		"description": "Obtenez des liens raccourcis utilisant Framalink, un serveur LSTU."
 	},
 	"extShortDesc": {
 		"message": "Obtenez des liens raccourcis utilisant Framalink, un serveur LSTU.",
