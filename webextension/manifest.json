@@ -11,8 +11,7 @@
 	"short_name": "FramalinkShortenerDev",
 	"description": "__MSG_extShortDesc__",
 	"author": "ZatsuneNoMokou",
-	"version": "3.0.1",
-	"homepage_url": "https://gitlab.com/ZatsuneNoMokou/framalink-shortener",
+	"version": "3.0.2",
 	"icons": {
 		"96": "/icon_96.png",
 		"128": "/icon_128.png"
@@ -49,6 +48,5 @@
 		"page": "data/options.html",
 		"chrome_style": true
 	},
-	"minimum_chrome_version": "42.0",
-	"web_accessible_resources": [ "/icon_128.png" ]
+	"minimum_chrome_version": "42.0"
 }

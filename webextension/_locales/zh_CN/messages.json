@@ -1,7 +1,7 @@
 {
 	"extName": {
 		"message": "Framalink 短链接生成器",
-		"description": ""
+		"description": "使用 Framalink 获取短链接，它是一个 LSTU 服务器。"
 	},
 	"extShortDesc": {
 		"message": "使用 Framalink 获取短链接，它是一个 LSTU 服务器。",

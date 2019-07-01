@@ -1773,9 +1773,15 @@ rocambole-token@^1.1.0, rocambole-token@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/rocambole-token/-/rocambole-token-1.2.1.tgz#c785df7428dc3cb27ad7897047bd5238cc070d35"
 
-rocambole@^0.7.0, "rocambole@github:zatsunenomokou/rocambole":
+rocambole@^0.7.0:
   version "0.7.0"
   resolved "https://codeload.github.com/zatsunenomokou/rocambole/tar.gz/8ae1996c81bb4b3050bd4f9467c495bcdadfba74"
+  dependencies:
+    esprima "~4.0.0"
+
+"rocambole@github:millermedeiros/rocambole":
+  version "0.8.0"
+  resolved "https://codeload.github.com/millermedeiros/rocambole/tar.gz/3acbab31b6f54e5fc6e09a5fbdf837bf4879c85e"
   dependencies:
     esprima "~4.0.0"
 
