@@ -18,8 +18,11 @@
 	},
 	"background": {
 		"scripts": [
+			"data/js/lib/browser-polyfill.js",
+			"data/js/chrome-notification-controler.js",
 			"data/options-data.js",
 			"data/options-api.js",
+			"data/js/index_beta.js",
 			"index.js"
 		]
 	},
