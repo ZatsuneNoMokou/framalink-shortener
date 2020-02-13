@@ -21,6 +21,11 @@ var appGlobal = {
 	'isFirefox': isFirefox
 };
 
+function consoleMsg(type, ...messages) {
+	return console[type](...messages);
+}
+const notificationController = new ChromeNotificationControler();
+
 chrome.notifications.onClicked.addListener(function(notificationId) {
 	console.info(`${notificationId} (onClicked)`);
 	chrome.notifications.clear(notificationId);
@@ -91,11 +96,20 @@ chrome.notifications.onClicked.addListener(function(notificationId) {
 
 
 
-function isRightURL(URL){
+/**
+ *
+ * @param {string} url
+ * @return {boolean}
+ */
+function isRightURL(url){
 	let test_url = /(?:http|https):\/\/.+/;
-	return (typeof URL === "string" && test_url.test(URL));
+	return (typeof url === "string" && test_url.test(url));
 }
 
+/**
+ *
+ * @return {string}
+ */
 function getApiUrl() {
 	const defaultApiUrl = "https://frama.link/",
 		customApiUrl = getPreference("custom_lstu_server")
@@ -105,7 +119,11 @@ function getApiUrl() {
 }
 
 
-
+/**
+ *
+ * @param {string} string
+ * @return {boolean}
+ */
 function copyToClipboard(string) {
 	if (document.querySelector('#copy_form') !== null) {
 		let node = document.querySelector('#copy_form');
@@ -129,8 +147,18 @@ function copyToClipboard(string) {
 }
 
 
-
+/**
+ *
+ * @param {string} url
+ * @return {Promise<void>}
+ */
 function shortener_url(url) {
+	if (getPreference('no_api_lstu') === true) {
+		return shortener_url___no_api(url);
+	}
+
+
+
 	let api_url = getApiUrl();
 	api_url = `${api_url}${(/(?:http|https):\/\/.+\//.test(api_url) === true)? 'a' : '/a'}`;
 
@@ -170,6 +198,27 @@ function shortener_url(url) {
 			});
 		})
 		.then(async res => {
+			if (res.url.endsWith('/login') === true) {
+				notificationController.send({
+					type: 'basic',
+					title: 'Framalink shortener',
+					message: _('login_needed'),
+					iconUrl: '/icon.png',
+					isClickable: false
+				})
+					.then((result) => {
+						if (result.triggeredType === 'onClicked' && result.buttonIndex === null) {
+							browser.tabs.create({
+								url: res.url
+							})
+								.catch(console.error)
+							;
+						}
+					}, console.error)
+				;
+				return;
+			}
+
 			try {
 				const text = await res.text();
 				shortener_url_result(api_url, url, text);
@@ -181,9 +230,17 @@ function shortener_url(url) {
 	;
 }
 
+/**
+ *
+ * @param {string} api_url
+ * @param {string} url
+ * @param {string|Object} rawData
+ */
 function shortener_url_result(api_url, url, rawData) {
 	let data = null;
-	if (typeof rawData === 'string') {
+	if (typeof rawData === 'object' && rawData !== null) {
+		data = rawData;
+	} else if (typeof rawData === 'string') {
 		try {
 			data = JSON.parse(rawData);
 		} catch (e) {
@@ -220,7 +277,6 @@ function shortener_url_result(api_url, url, rawData) {
 
 
 
-	console.warn(data.short);
 	if (copyToClipboard(data.short) === true) { // Copy short link to clipboard
 		chrome.notifications.create({
 			type: "basic",

@@ -1,8 +1,10 @@
 {
 	"name": "framalink-shortener",
-	"version": "3.0.2",
+	"version": "3.1.0",
 	"description": "Be notified of streams from Dailymotion, Mixer, Smashcast, Twitch and Youtube.",
-	"dependencies": {},
+	"dependencies": {
+		"webextension-polyfill": "^0.6.0"
+	},
 	"devDependencies": {
 		"chalk": "^2.3.1",
 		"fs-extra": "^5.0.0",
@@ -18,7 +20,7 @@
 		"release:dev": "node scripts/release-dev.js",
 		"release": "node scripts/release-dev.js --prod",
 		"test": "node scripts/test.js",
-		"update": "npm run install"
+		"update": "node scripts/update.js"
 	},
 	"repository": {
 		"type": "git",

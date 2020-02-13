@@ -37,6 +37,15 @@
 	"custom_lstu_server_description": {
 		"message": "LSTU server, for example https://lstu.fr/"
 	},
+	"no_api_lstu_title": {
+		"message": "\"No api\" LSTU usage"
+	},
+	"no_api_lstu_description": {
+		"message": "Tries shorten without api"
+	},
+	"login_needed": {
+		"message": "Please login, and retry after"
+	},
 	"options_saved": {
 		"message": "Options saved."
 	},

@@ -8,6 +8,14 @@ optionsData.options = {
 		"type": "string",
 		"value": ""
 	}
+};
+if (browser.runtime.getManifest().name.toLowerCase().endsWith(' (dev)')) {
+	optionsData.options.no_api_lstu = {
+		"title": "\"No api\" LSTU usage",
+		"description": "Tries shorten without api",
+		"type": "bool",
+		"value": false
+	}
 }
 
 optionsData.options_default = {};
