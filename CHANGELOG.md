@@ -1,3 +1,8 @@
+# 3.1.0
+* \+ : Add webextension-polyfill
+* \+ : Login support
+* \+ : "No api" mode (only for dev version)
+
 # 3.0.2
 * Fix : English typo fix
 
