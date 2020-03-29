@@ -6,9 +6,11 @@
 		"webextension-polyfill": "^0.6.0"
 	},
 	"devDependencies": {
+		"@types/klaw-sync": "^6.0.0",
 		"chalk": "^2.3.1",
 		"fs-extra": "^5.0.0",
 		"klaw": "^2.1.1",
+		"klaw-sync": "^6.0.0",
 		"rocambole": "github:millermedeiros/rocambole",
 		"strip-debug": "^2.0.0",
 		"stylelint": "^9.0.0",

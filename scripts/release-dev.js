@@ -13,6 +13,8 @@ const
 	through2 = require('through2'),
 	stripDebug = require('strip-debug'), //TODO /!\ Using my rocambole fork hoping update https://github.com/millermedeiros/rocambole/issues/32
 
+	klawSync = require('klaw-sync'),
+
 	yargs = require('yargs')
 		.usage('Usage: $0 [options]')
 
@@ -75,6 +77,9 @@ async function init() {
 	}
 	await errorHandler(fs.mkdir(tmpPath));
 
+
+
+
 	echo("Copying into tmp folder");
 	try {
 		fs.copySync(path.join(pwd, "./webextension"), tmpPath);
@@ -82,16 +87,42 @@ async function init() {
 		error(e);
 	}
 
-	if (yargs.prod === true) {
-		echo("Ready to clean files!");
+	echo("Ready to clean files!");
 
+
+
+	echo('Handling **/*.prod.* files...');
+
+	const prodFilePathRegex = /\.prod(\..+)$/;
+	const prodFiles = klawSync(tmpPath, {
+		nodir: true,
+		filter: item => {
+			return item.stats.isDirectory() || prodFilePathRegex.test(item.path)
+		}
+	});
+	const promises = prodFiles.map(fileObj => {
+		if (yargs.prod === false) {
+			return fs.remove(fileObj.path);
+		} else {
+			return fs.move(fileObj.path, fileObj.path.replace(prodFilePathRegex, '$1'), {
+				overwrite: true
+			});
+		}
+	});
+
+	await Promise.all(promises);
+
+
+
+	if (yargs.prod === true) {
 		let excludeDirString = "data/js/lib";
-		if(process.platform==="win32"){
+		if (process.platform === "win32") {
 			excludeDirString = "data\\js\\lib";
 		}
 
 
 
+		echo('Strip debug...');
 		const excludeDirAndJsFilter = through2.obj(function (item, enc, next) {
 			if(item.path.indexOf(excludeDirString) === -1 && item.stats.isFile() && path.extname(item.path) === `.js`){
 				this.push(item)
@@ -118,6 +149,7 @@ async function init() {
 			})
 		;
 
+		echo('Adjusting manifest...');
 		await errorHandler(modifyFile(path.join(tmpPath, './manifest.json'), function (data) {
 			data.applications.gecko.id = 'framalinkshortener@zatsunenomokou.eu';
 			delete data.applications.gecko.update_url;
