@@ -153,7 +153,7 @@ function copyToClipboard(string) {
  * @return {Promise<void>}
  */
 function shortener_url(url) {
-	if (getPreference('no_api_lstu') === true) {
+	if (typeof shortener_url___no_api === 'function' && getPreference('no_api_lstu') === true) {
 		return shortener_url___no_api(url);
 	}
 

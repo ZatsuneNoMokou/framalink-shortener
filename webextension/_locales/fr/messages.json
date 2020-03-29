@@ -44,7 +44,7 @@
 		"message": "Essaie de raccourcir sans api"
 	},
 	"login_needed": {
-		"message": "Veuillez vous connecter, et réessayer après."
+		"message": "Veuillez cliquer ici pour vous connecter, et réessayer après authentification."
 	},
 	"options_saved": {
 		"message": "Options enregistrées."

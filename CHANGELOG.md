@@ -1,3 +1,6 @@
+# 3.1.1
+* Fix : Better notification message for the login support
+
 # 3.1.0
 * \+ : Add webextension-polyfill
 * \+ : Login support
