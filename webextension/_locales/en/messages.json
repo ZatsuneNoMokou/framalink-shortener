@@ -44,7 +44,7 @@
 		"message": "Tries shorten without api"
 	},
 	"login_needed": {
-		"message": "Please login, and retry after"
+		"message": "Please click here to login, and retry after"
 	},
 	"options_saved": {
 		"message": "Options saved."
