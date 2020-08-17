@@ -4,6 +4,8 @@ const
 	path = require("path"),
 	pwd = path.join(__dirname, ".."),
 
+	webExt = require('web-ext').default,
+
 	{ execSync } = require('./common/custom-child-process')(pwd),
 
 	{modifyFile, modifyFiles} = require("./common/file-operations"),
@@ -161,11 +163,26 @@ async function init() {
 		}, "json"));
 	}
 
-	try{
-		execSync("web-ext build --artifacts-dir ./ --source-dir ./tmp", true);
-	} catch (e){
-		error(e);
+
+
+	const ignoredFiles = [];
+
+	try {
+		const packageJson = fs.readJSONSync(path.resolve(process.cwd(), './package.json'));
+		if (Array.isArray(packageJson.webExt.ignoreFiles)) {
+			ignoredFiles.push(...packageJson.webExt.ignoreFiles);
+		}
+	} catch (e) {
+		console.error(e);
 	}
+
+	await errorHandler(webExt.cmd.build({
+		sourceDir: path.resolve(pwd, './tmp'),
+		artifactsDir: '.',
+		ignoreFiles: ignoredFiles
+	}, {
+		shouldExitProgram: false,
+	}));
 
 	await errorHandler(fs.remove(tmpPath));
 }

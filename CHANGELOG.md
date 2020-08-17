@@ -1,3 +1,6 @@
+# WIP
+* \+ : Firefox theme icons
+
 # 3.1.1
 * Fix : Better notification message for the login support
 
