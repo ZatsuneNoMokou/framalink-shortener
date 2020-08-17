@@ -32,7 +32,29 @@
 			"48": "/icon_48.png",
 			"96": "/icon_96.png",
 			"128": "/icon_128.png"
-		}
+		},
+		"theme_icons": [
+			{
+				"light": "/icons/mstile-lstu_16.png",
+				"dark": "/icons/lstu_16.png",
+				"size": 16
+			},
+			{
+				"light": "/icons/mstile-lstu_48.png",
+				"dark": "/icons/lstu_48.png",
+				"size": 48
+			},
+			{
+				"light": "/icons/mstile-lstu_96.png",
+				"dark": "/icons/lstu_96.png",
+				"size": 96
+			},
+			{
+				"light": "/icons/mstile-lstu_128.png",
+				"dark": "/icons/lstu_128.png",
+				"size": 128
+			}
+		]
 	},
 	"default_locale": "en",
 	"offline_enabled": false,
