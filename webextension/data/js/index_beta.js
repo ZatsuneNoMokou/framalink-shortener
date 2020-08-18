@@ -61,10 +61,10 @@ async function openAndWaitUrl(url) {
  * @return {Promise<void>}
  */
 async function shortener_url___no_api(url) {
-	let api_url = getApiUrl();
+	let api_url = await getApiUrl();
 
 	if (typeof url !== "string" || isRightURL(url) !== true) {
-		chrome.notifications.create({
+		await browser.notifications.create({
 			type: 'basic',
 			title: 'Framalink shortener',
 			message: _('Check_your_link_or_page'),

@@ -1,30 +1,14 @@
 'use strict';
 
-// https://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser/9851769#9851769
-
-const userAgent = (navigator && navigator.userAgent) || '';
-
-// Firefox 1.0+
-const isFirefox = typeof InstallTrigger !== 'undefined' || /(?:firefox|fxios)\/(\d+)/i.test(userAgent);
-
 
 
 
 
 let _ = chrome.i18n.getMessage;
 
-// appGlobal : Accessible with chrome.extension.getBackgroundPage();
-var appGlobal = {
-	'options': optionsData.options,
-	'options_default': optionsData.options_default,
-	'options_default_sync': optionsData.options_default_sync,
-	'isFirefox': isFirefox
-};
-
 function consoleMsg(type, ...messages) {
 	return console[type](...messages);
 }
-const notificationController = new ChromeNotificationControler();
 
 chrome.notifications.onClicked.addListener(function(notificationId) {
 	console.info(`${notificationId} (onClicked)`);
@@ -36,61 +20,82 @@ chrome.notifications.onClicked.addListener(function(notificationId) {
 
 
 (function() {
-	chrome.contextMenus.removeAll();
-
-
-
-	chrome.browserAction.onClicked.addListener(function(tab) {
-		let url = tab.url; // tabs.Tab
-		console.info(`[ActionButton] URL: ${url}`);
-		shortener_url(url);
-	});
+	browser.contextMenus.removeAll()
+		.catch(err => {
+			consoleMsg('error', err);
+		})
+	;
 
 
 
 	const pageMenu = [];
-	if (chrome.contextMenus.ContextType.hasOwnProperty("PAGE")) {
+	if (chrome.contextMenus.ContextType.hasOwnProperty('PAGE')) {
 		pageMenu.push("page");
 	}
-	if (chrome.contextMenus.ContextType.hasOwnProperty("TAB")) {
+	if (chrome.contextMenus.ContextType.hasOwnProperty('TAB')) {
 		pageMenu.push("tab");
 	}
 	if (pageMenu.length > 0) {
 		chrome.contextMenus.create({
-			"title": _("Shorten_this_page_URL"),
-			"contexts": pageMenu,
-			"documentUrlPatterns": ["http://*/*", "https://*/*"],
-			"onclick": function(info) {
-				let data = info.pageUrl;
-				console.info(`[ContextMenu] URL: ${data}`);
-				shortener_url(data);
-			}
+			id: 'shorten_fromPage',
+			title: _("Shorten_this_page_URL"),
+			contexts: pageMenu,
+			documentUrlPatterns: ["http://*/*", "https://*/*"]
 		});
 	}
 
 
 
 	chrome.contextMenus.create({
-		"title": _("Shorten_this_link"),
-		"contexts": ["link"],
-		"targetUrlPatterns": ["http://*/*", "https://*/*"],
-		"onclick": function(info) {
-			let data = info.linkUrl;
-			console.info(`[ContextMenu] URL: ${data}`);
-			shortener_url(data);
-		}
+		id: 'shorten_fromLink',
+		title: _("Shorten_this_link"),
+		contexts: ["link"],
+		targetUrlPatterns: ["http://*/*", "https://*/*"]
 	});
 	chrome.contextMenus.create({
-		"title": _("Shorten_this_picture"),
-		"contexts": ["image"],
-		"targetUrlPatterns": ["http://*/*", "https://*/*"],
-		"onclick": function(info) {
-			let data = info.srcUrl;
-			console.info(`[ContextMenu] URL: ${data}`);
-			shortener_url(data);
-		}
+		id: 'shorten_fromImage',
+		title: _("Shorten_this_picture"),
+		contexts: ["image"],
+		targetUrlPatterns: ["http://*/*", "https://*/*"]
 	});
 })();
+
+browser.browserAction.onClicked.addListener(function(tab) {
+	let url = tab.url; // tabs.Tab
+	console.info(`[ActionButton] URL: ${url}`);
+	shortener_url(url)
+		.catch(err => {
+			consoleMsg('error', err);
+		})
+	;
+});
+
+// noinspection JSUnusedLocalSymbols
+browser.contextMenus.onClicked.addListener(function (info, tab) {
+	let data;
+	switch (info.menuItemId) {
+		case 'shorten_fromPage':
+			data = info.pageUrl;
+				break;
+		case 'shorten_fromLink':
+			data = info.linkUrl;
+			break;
+		case 'shorten_fromImage':
+			data = info.srcUrl;
+			break;
+	}
+
+	if (!data) {
+		return;
+	}
+
+	console.info(`[ContextMenu] URL: ${data}`);
+	shortener_url(data)
+		.catch(err => {
+			consoleMsg('error', err);
+		})
+	;
+})
 
 
 
@@ -101,18 +106,18 @@ chrome.notifications.onClicked.addListener(function(notificationId) {
  * @param {string} url
  * @return {boolean}
  */
-function isRightURL(url){
+function isRightURL(url) {
 	let test_url = /(?:http|https):\/\/.+/;
 	return (typeof url === "string" && test_url.test(url));
 }
 
 /**
  *
- * @return {string}
+ * @return {Promise<string>}
  */
-function getApiUrl() {
-	const defaultApiUrl = "https://frama.link/",
-		customApiUrl = getPreference("custom_lstu_server")
+async function getApiUrl() {
+	const defaultApiUrl = 'https://frama.link/',
+		customApiUrl = await getPreference('custom_lstu_server')
 	;
 
 	return (isRightURL(customApiUrl) === false)? defaultApiUrl : customApiUrl
@@ -147,24 +152,26 @@ function copyToClipboard(string) {
 }
 
 
+
+const NOTIFICATION_LOGIN_NEEDED_ID = 'framalink_shortener_loginNeeded';
 /**
  *
  * @param {string} url
  * @return {Promise<void>}
  */
-function shortener_url(url) {
-	if (typeof shortener_url___no_api === 'function' && getPreference('no_api_lstu') === true) {
+async function shortener_url(url) {
+	if (typeof shortener_url___no_api === 'function' && await getPreference('no_api_lstu') === true) {
 		return shortener_url___no_api(url);
 	}
 
 
 
-	let api_url = getApiUrl();
+	let api_url = await getApiUrl();
 	api_url = `${api_url}${(/(?:http|https):\/\/.+\//.test(api_url) === true)? 'a' : '/a'}`;
 
 
 	if (typeof url !== "string" || isRightURL(url) !== true) {
-		chrome.notifications.create({
+		await browser.notifications.create({
 			type: 'basic',
 			title: 'Framalink shortener',
 			message: _('Check_your_link_or_page'),
@@ -189,33 +196,27 @@ function shortener_url(url) {
 		method: 'POST'
 	})
 		.catch(() => {
-			chrome.notifications.create({
+			browser.notifications.create({
 				type: 'basic',
 				title: 'Framalink shortener',
 				message: _('Error_on_request'),
 				iconUrl: '/icon.png',
 				isClickable: true
-			});
+			})
+				.catch(err => {
+					console.error(err);
+				})
+			;
 		})
 		.then(async res => {
 			if (res.url.endsWith('/login') === true) {
-				notificationController.send({
+				window.localStorage.setItem(NOTIFICATION_LOGIN_NEEDED_ID, res.url);
+				await browser.notifications.create(NOTIFICATION_LOGIN_NEEDED_ID, {
 					type: 'basic',
 					title: 'Framalink shortener',
 					message: _('login_needed'),
-					iconUrl: '/icon.png',
-					isClickable: false
+					iconUrl: '/icon.png'
 				})
-					.then((result) => {
-						if (result.triggeredType === 'onClicked' && result.buttonIndex === null) {
-							browser.tabs.create({
-								url: res.url
-							})
-								.catch(console.error)
-							;
-						}
-					}, console.error)
-				;
 				return;
 			}
 
@@ -229,6 +230,16 @@ function shortener_url(url) {
 		})
 	;
 }
+
+browser.notifications.onClicked.addListener(function (notificationId) {
+	if (notificationId === NOTIFICATION_LOGIN_NEEDED_ID) {
+		browser.tabs.create({
+			url: window.localStorage.getItem(NOTIFICATION_LOGIN_NEEDED_ID)
+		})
+			.catch(console.error)
+		;
+	}
+})
 
 /**
  *
@@ -295,37 +306,3 @@ function shortener_url_result(api_url, url, rawData) {
 		});
 	}
 }
-
-
-
-
-
-chrome.storage.local.get(null, function(currentLocalStorage) {
-	let currentPreferences = {};
-	for (let prefId in currentLocalStorage) {
-		if (!currentLocalStorage.hasOwnProperty(prefId)) {
-			continue;
-		}
-
-		if (optionsData.options_default.hasOwnProperty(prefId)) {
-			currentPreferences[prefId] = currentLocalStorage[prefId];
-		} else {
-			currentPreferences[prefId] = currentLocalStorage[prefId];
-			console.warn(`${prefId} has no default value (value: currentLocalStorage[prefId])`);
-		}
-	}
-
-	// Load default settings for the missing settings without saving them in the storage
-	for (let prefId in optionsData.options_default) {
-		if (optionsData.options_default.hasOwnProperty(prefId) && !currentPreferences.hasOwnProperty(prefId)) {
-			currentPreferences[prefId] = optionsData.options_default[prefId];
-		}
-	}
-
-	appGlobal.currentPreferences = currentPreferences;
-
-	console.group();
-	console.info("Current preferences in the local storage :");
-	console.dir(currentPreferences);
-	console.groupEnd();
-});
