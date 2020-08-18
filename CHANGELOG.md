@@ -1,6 +1,8 @@
-# WIP
-* \+ : Firefox theme icons
+WIP
 * \+ : Ability to unload background page using the persist feature
+
+# 3.2.0
+* \+ : Firefox theme icons
 
 # 3.1.1
 * Fix : Better notification message for the login support
