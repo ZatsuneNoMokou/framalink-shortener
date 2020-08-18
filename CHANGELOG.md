@@ -1,5 +1,5 @@
 WIP
-* \+ : Ability to unload background page using the persist feature
+* \+ : Ability to unload background page using the persistent feature
 
 # 3.2.0
 * \+ : Firefox theme icons
