@@ -76,16 +76,16 @@ function newPreferenceNode(parent, id, prefObj) {
 		case 'menulist':
 			prefNode = document.createElement('select');
 			prefNode.size = 2;
-			for(let o in prefObj.options){
+			for (let o in prefObj.options) {
 				if (!prefObj.options.hasOwnProperty(o)) continue;
 
 				let option = prefObj.options[o];
-				
+
 				let optionNode = document.createElement('option');
 				optionNode.text = option.label;
 				optionNode.value = option.value;
-				optionNode.setAttribute('data-translate-id',`${id}_${option.value}`);
-				
+				optionNode.setAttribute('data-translate-id', `${id}_${option.value}`);
+
 				prefNode.add(optionNode);
 			}
 			break;
@@ -112,15 +112,15 @@ function newPreferenceNode(parent, id, prefObj) {
 	;
 
 	prefNode.id = id;
-	if(prefObj.type !== 'control') {
+	if (prefObj.type !== 'control') {
 		prefNode.className = 'preferenceInput';
 	}
-	if(id.indexOf('_keys_list') !== -1) {
+	if (id.indexOf('_keys_list') !== -1) {
 		node.className += ' flex_input_text';
 	}
 	prefNode.setAttribute('data-setting-type', prefObj.type);
-	
-	if(prefObj.type !== 'menulist') {
+
+	if (prefObj.type !== 'menulist') {
 		prefNode.setAttribute('data-translate-id', id);
 	}
 
@@ -128,7 +128,7 @@ function newPreferenceNode(parent, id, prefObj) {
 	node.appendChild(prefNode);
 	parent.appendChild(node);
 
-	switch(prefObj.type) {
+	switch (prefObj.type) {
 		case 'string':
 			prefNode.addEventListener('input', settingNode_onChange);
 			break;
@@ -140,10 +140,11 @@ function newPreferenceNode(parent, id, prefObj) {
 			break;
 		case 'control':
 			// Control functions
-			void(0)
+			void (0)
 			break;
 	}
 }
+
 loadPreferences();
 
 window.addEventListener('storage', function(event) {
@@ -152,7 +153,7 @@ window.addEventListener('storage', function(event) {
 	let prefNode = document.querySelector(`#preferenceContainer #${prefId}`);
 
 	if (prefNode != null && typeof options[prefId].type === 'string') {
-		switch(options[prefId].type) {
+		switch (options[prefId].type) {
 			case "string":
 			case "color":
 			case "menulist":
@@ -214,14 +215,14 @@ function saveOptionsInSync() {
 		}
 	}
 
-	storage.set(settingsDataToSync, function() {
+	storage.set(settingsDataToSync, () => {
 		// Update status to let user know options were saved.
 		var status = document.getElementById('status');
 		status.textContent = _('options_saved_sync');
 		if (typeof chrome.runtime.lastError != 'undefined') {
 			console.warn(chrome.runtime.lastError);
 		}
-		setTimeout(function() {
+		setTimeout(() => {
 			status.textContent = '';
 		}, 2000);
 	});
@@ -229,11 +230,11 @@ function saveOptionsInSync() {
 // Restores states using the preferences stored in chrome.storage.
 function restaureOptionsFromSync() {
 	// Default values
-	storage.get(options_default_sync, function(items) {
+	storage.get(options_default_sync, items => {
 		if (typeof chrome.runtime.lastError !== 'undefined') {
 			console.warn(chrome.runtime.lastError);
 		}
-		
+
 		for (let id in items) {
 			if (!items.hasOwnProperty(id)) continue;
 
@@ -245,7 +246,7 @@ function restaureOptionsFromSync() {
 				console.groupEnd();
 				return;
 			}
-			
+
 			let settingType = prefNode.dataset.settingType;
 			switch(settingType) {
 				case "string":
@@ -263,7 +264,7 @@ function restaureOptionsFromSync() {
 					// Nothing to update, no value
 					break;
 			}
-			
+
 			/*				Save the settings received from sync				*/
 			settingNode_onChange({type: "change", srcElement: prefNode, target: prefNode});
 		}
@@ -271,7 +272,11 @@ function restaureOptionsFromSync() {
 }
 
 let restaure_sync_button = document.querySelector("#restaure_sync");
-restaure_sync_button.addEventListener("click", function(){restaureOptionsFromSync();});
+restaure_sync_button.addEventListener("click", function () {
+	restaureOptionsFromSync();
+});
 
 let save_sync_button = document.querySelector("#save_sync");
-save_sync_button.addEventListener("click", function(){saveOptionsInSync();});
+save_sync_button.addEventListener("click", function () {
+	saveOptionsInSync();
+});

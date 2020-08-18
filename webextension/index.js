@@ -1,42 +1,36 @@
 'use strict';
 
 
+let _ = browser.i18n.getMessage;
 
-
-
-let _ = chrome.i18n.getMessage;
-
-function consoleMsg(type, ...messages) {
-	return console[type](...messages);
-}
-
-chrome.notifications.onClicked.addListener(function(notificationId) {
+browser.notifications.onClicked.addListener(function (notificationId) {
 	console.info(`${notificationId} (onClicked)`);
-	chrome.notifications.clear(notificationId);
+	browser.notifications.clear(notificationId)
+		.catch(err => {
+			console.error(err);
+		})
+	;
 });
 
 
 
-
-
-(function() {
+(function () {
 	browser.contextMenus.removeAll()
 		.catch(err => {
-			consoleMsg('error', err);
+			console.error(err);
 		})
 	;
 
 
-
 	const pageMenu = [];
-	if (chrome.contextMenus.ContextType.hasOwnProperty('PAGE')) {
+	if (browser.contextMenus.ContextType.hasOwnProperty('PAGE')) {
 		pageMenu.push("page");
 	}
-	if (chrome.contextMenus.ContextType.hasOwnProperty('TAB')) {
+	if (browser.contextMenus.ContextType.hasOwnProperty('TAB')) {
 		pageMenu.push("tab");
 	}
 	if (pageMenu.length > 0) {
-		chrome.contextMenus.create({
+		browser.contextMenus.create({
 			id: 'shorten_fromPage',
 			title: _("Shorten_this_page_URL"),
 			contexts: pageMenu,
@@ -44,15 +38,13 @@ chrome.notifications.onClicked.addListener(function(notificationId) {
 		});
 	}
 
-
-
-	chrome.contextMenus.create({
+	browser.contextMenus.create({
 		id: 'shorten_fromLink',
 		title: _("Shorten_this_link"),
 		contexts: ["link"],
 		targetUrlPatterns: ["http://*/*", "https://*/*"]
 	});
-	chrome.contextMenus.create({
+	browser.contextMenus.create({
 		id: 'shorten_fromImage',
 		title: _("Shorten_this_picture"),
 		contexts: ["image"],
@@ -60,12 +52,12 @@ chrome.notifications.onClicked.addListener(function(notificationId) {
 	});
 })();
 
-browser.browserAction.onClicked.addListener(function(tab) {
+browser.browserAction.onClicked.addListener(function (tab) {
 	let url = tab.url; // tabs.Tab
 	console.info(`[ActionButton] URL: ${url}`);
 	shortener_url(url)
 		.catch(err => {
-			consoleMsg('error', err);
+			console.error(err);
 		})
 	;
 });
@@ -76,7 +68,7 @@ browser.contextMenus.onClicked.addListener(function (info, tab) {
 	switch (info.menuItemId) {
 		case 'shorten_fromPage':
 			data = info.pageUrl;
-				break;
+			break;
 		case 'shorten_fromLink':
 			data = info.linkUrl;
 			break;
@@ -92,13 +84,10 @@ browser.contextMenus.onClicked.addListener(function (info, tab) {
 	console.info(`[ContextMenu] URL: ${data}`);
 	shortener_url(data)
 		.catch(err => {
-			consoleMsg('error', err);
+			console.error(err);
 		})
 	;
 })
-
-
-
 
 
 /**
@@ -175,8 +164,7 @@ async function shortener_url(url) {
 			type: 'basic',
 			title: 'Framalink shortener',
 			message: _('Check_your_link_or_page'),
-			iconUrl: '/icon.png',
-			isClickable: true
+			iconUrl: '/icon.png'
 		});
 
 		return;
@@ -195,13 +183,13 @@ async function shortener_url(url) {
 		},
 		method: 'POST'
 	})
-		.catch(() => {
+		.catch(err => {
+			console.error(err);
 			browser.notifications.create({
 				type: 'basic',
 				title: 'Framalink shortener',
 				message: _('Error_on_request'),
-				iconUrl: '/icon.png',
-				isClickable: true
+				iconUrl: '/icon.png'
 			})
 				.catch(err => {
 					console.error(err);
@@ -216,7 +204,7 @@ async function shortener_url(url) {
 					title: 'Framalink shortener',
 					message: _('login_needed'),
 					iconUrl: '/icon.png'
-				})
+				});
 				return;
 			}
 
@@ -260,24 +248,28 @@ function shortener_url_result(api_url, url, rawData) {
 	}
 
 	if (data === null) {
-		chrome.notifications.create({
+		browser.notifications.create({
 			type: 'basic',
 			title: 'Framalink shortener',
 			message: _('Retry_or_try_the_context_menu'),
-			iconUrl: '/icon.png',
-			isClickable: true
-		});
-
+			iconUrl: '/icon.png'
+		})
+			.catch(err => {
+				console.error(err);
+			})
+		;
 		return;
-	} else if (data.success !== true) {
-		chrome.notifications.create({
+	} else if ('success' in data && data.success !== true) {
+		browser.notifications.create({
 			type: 'basic',
 			title: 'Framalink shortener',
 			message: _('Error_on_request'),
-			iconUrl: '/icon.png',
-			isClickable: true
-		});
-
+			iconUrl: '/icon.png'
+		})
+			.catch(err => {
+				console.error(err);
+			})
+		;
 		return;
 	}
 
@@ -289,20 +281,26 @@ function shortener_url_result(api_url, url, rawData) {
 
 
 	if (copyToClipboard(data.short) === true) { // Copy short link to clipboard
-		chrome.notifications.create({
-			type: "basic",
-			title: "Framalink shortener",
-			message: _("Shortened_link_copied_in_the_clipboard"),
-			iconUrl: "/icon.png",
-			isClickable: true
-		});
+		browser.notifications.create({
+			type: 'basic',
+			title: 'Framalink shortener',
+			message: _('Shortened_link_copied_in_the_clipboard'),
+			iconUrl: '/icon.png'
+		})
+			.catch(err => {
+				console.error(err);
+			})
+		;
 	} else {
-		chrome.notifications.create({
-			type: "basic",
-			title: "Framalink shortener",
-			message:  _("Error_when_copying_to_clipboad"),
-			iconUrl: "/icon.png",
-			isClickable: true
-		});
+		browser.notifications.create({
+			type: 'basic',
+			title: 'Framalink shortener',
+			message: _('Error_when_copying_to_clipboad'),
+			iconUrl: '/icon.png'
+		})
+			.catch(err => {
+				console.error(err);
+			})
+		;
 	}
 }
