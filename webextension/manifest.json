@@ -3,7 +3,7 @@
 		"gecko": {
 			"id": "framalinkshortener_dev@zatsunenomokou.eu",
 			"update_url": "https://gitlab.com/ZatsuneNoMokou/framalink-shortener/raw/master/dist/framalink_shortener_dev.update.json",
-			"strict_min_version": "63.0"
+			"strict_min_version": "74.0"
 		}
 	},
 	"manifest_version": 2,
@@ -11,15 +11,15 @@
 	"short_name": "FramalinkShortenerDev",
 	"description": "__MSG_extShortDesc__",
 	"author": "ZatsuneNoMokou",
-	"version": "3.2.0",
+	"version": "3.3.0",
 	"icons": {
 		"96": "/icon_96.png",
 		"128": "/icon_128.png"
 	},
 	"background": {
+		"persistent": false,
 		"scripts": [
 			"data/js/lib/browser-polyfill.js",
-			"data/js/chrome-notification-controler.js",
 			"data/options-data.js",
 			"data/options-api.js",
 			"data/js/index_beta.js",
@@ -73,5 +73,5 @@
 		"page": "data/options.html",
 		"chrome_style": true
 	},
-	"minimum_chrome_version": "42.0"
+	"minimum_chrome_version": "80.0"
 }
