@@ -1,4 +1,4 @@
-WIP
+# 3.3.0
 * \+ : Ability to unload background page using the persistent feature
 
 # 3.2.0
