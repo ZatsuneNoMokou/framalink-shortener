@@ -2,10 +2,10 @@
 	"addons": {
 		"framalinkshortener_dev@zatsunenomokou.eu": {
 			"updates": [
-				{ "version": "3.2.0",
+				{ "version": "3.3.0",
 					"update_link": "https://gitlab.com/ZatsuneNoMokou/framalink-shortener/raw/master/dist/framalink_shortener_dev.xpi",
 					"applications": {
-						"gecko": { "strict_min_version": "63" } } }
+						"gecko": { "strict_min_version": "74" } } }
 			]
 		}
 	}
