@@ -1,3 +1,7 @@
+# WIP
+* Fix : Remove unused permissions
+* Fix : Change default api url, framalink service is closing
+
 # 3.3.0
 * \+ : Ability to unload background page using the persistent feature
 

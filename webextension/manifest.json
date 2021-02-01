@@ -59,13 +59,11 @@
 	"default_locale": "en",
 	"offline_enabled": false,
 	"permissions": [
-		"tabs",
 		"activeTab",
 		"contextMenus",
 		"clipboardWrite",
 		"notifications",
 		"storage",
-		"unlimitedStorage",
 		"http://*/*",
 		"https://*/*"
 	],

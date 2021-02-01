@@ -105,7 +105,7 @@ function isRightURL(url) {
  * @return {Promise<string>}
  */
 async function getApiUrl() {
-	const defaultApiUrl = 'https://frama.link/',
+	const defaultApiUrl = 'https://lstu.fr/',
 		customApiUrl = await getPreference('custom_lstu_server')
 	;
 
